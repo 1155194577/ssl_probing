@@ -1,5 +1,6 @@
 # Model and probe outputs
 probe_outputs/
+runs/
 
 # Local datasets and caches
 data/

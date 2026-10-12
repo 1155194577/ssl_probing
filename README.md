@@ -68,3 +68,17 @@ python probe.py \
 
 The script loops over every RVQ layer returned by `model.encode()`. For each
 layer it saves cumulative token codes as `.npy` and a reconstruction as `.wav`.
+
+## Test TensorBoard
+
+Generate fake layer-wise probing metrics:
+
+```bash
+python write_fake_tensorboard.py
+```
+
+Start TensorBoard:
+
+```bash
+tensorboard --logdir runs
+```
