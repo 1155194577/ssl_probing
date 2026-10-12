@@ -2,10 +2,10 @@
 
 ## Download LibriTTS-R with ModelScope
 
-Install ModelScope:
+Install the Python dependencies:
 
 ```bash
-python -m pip install modelscope
+python -m pip install -r requirements.txt
 ```
 
 Download the `dev.clean` split:
