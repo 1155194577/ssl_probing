@@ -1,0 +1,10 @@
+# Model and probe outputs
+probe_outputs/
+
+# Local datasets and caches
+data/
+
+# Python environments and bytecode
+.venv/
+__pycache__/
+*.py[cod]

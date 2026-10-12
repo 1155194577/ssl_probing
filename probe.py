@@ -1,13 +1,14 @@
 """Probe every residual-vector-quantizer layer of SpeechTokenizer."""
 
 import argparse
+import math
 from pathlib import Path
 
 import numpy as np
 import torch
-import torchaudio
 from modelscope import snapshot_download
-from scipy.io.wavfile import write
+from scipy.io.wavfile import read, write
+from scipy.signal import resample_poly
 from speechtokenizer import SpeechTokenizer
 
 
@@ -15,12 +16,28 @@ MODEL_NAME = "openmoss/SpeechTokenizer"
 
 
 def load_audio(audio_path: Path, sample_rate: int) -> torch.Tensor:
-    waveform, original_sample_rate = torchaudio.load(str(audio_path))
+    original_sample_rate, audio = read(str(audio_path))
+    if np.issubdtype(audio.dtype, np.integer):
+        info = np.iinfo(audio.dtype)
+        scale = max(abs(info.min), info.max)
+        audio = audio.astype(np.float32) / scale
+    else:
+        audio = audio.astype(np.float32)
+
+    if audio.ndim == 1:
+        audio = audio[None, :]
+    else:
+        audio = audio.T
+
     if original_sample_rate != sample_rate:
-        waveform = torchaudio.transforms.Resample(
-            orig_freq=original_sample_rate,
-            new_freq=sample_rate,
-        )(waveform)
+        divisor = math.gcd(original_sample_rate, sample_rate)
+        audio = resample_poly(
+            audio,
+            sample_rate // divisor,
+            original_sample_rate // divisor,
+            axis=1,
+        )
+    waveform = torch.from_numpy(np.ascontiguousarray(audio))
     if waveform.shape[0] > 1:
         waveform = waveform.mean(dim=0, keepdim=True)
     return waveform.unsqueeze(0)
