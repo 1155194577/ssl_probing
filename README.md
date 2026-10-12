@@ -1,17 +1,33 @@
 # ssl_probing
 
-## Download LibriTTS `train-clean-100`
+## Download LibriTTS-R with ModelScope
 
-Download the archive directly from OpenSLR. No TensorFlow installation is
-required:
+Install ModelScope:
 
 ```bash
-python download_libritts.py
+python -m pip install modelscope
 ```
 
-The default output path is `data/train-clean-100.tar.gz`. To choose another
-path:
+Download the `dev.clean` split:
 
 ```bash
-python download_libritts.py --output /path/to/train-clean-100.tar.gz
+python download_data.py
+```
+
+The script is equivalent to:
+
+```python
+from modelscope.msdatasets import MsDataset
+
+dataset = MsDataset.load(
+	"modelscope/libritts_r",
+	subset_name="default",
+	split="dev.clean",
+)
+```
+
+To download another split, for example `train.clean.100`:
+
+```bash
+python download_data.py --split train.clean.100
 ```
